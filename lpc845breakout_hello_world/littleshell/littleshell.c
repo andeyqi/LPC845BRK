@@ -74,17 +74,17 @@ static void shell_auto_complete(char *prefix)
     min_length = 0;
     name_ptr = NULL;
     
-    printf(NEW_LINE);
+    PRINTF(NEW_LINE);
     if (*prefix == '\0')
     {
 #if ( LTSHELL_USING_SHOW_HELP == 1 )
-        printf("shell commands:"NEW_LINE);
+        PRINTF("shell commands:"NEW_LINE);
         for (index = _syscall_table_begin; index < _syscall_table_end; index++)
         {
-            printf("%-16s - %s"NEW_LINE, index->name, index->desc);
+            PRINTF("%s - %s"NEW_LINE, index->name, index->desc);
         }
 #endif
-        printf("%s%s", CONSOLE_FROME, prefix);
+        PRINTF("%s%s", CONSOLE_FROME, prefix);
         return;
     }
 
@@ -103,7 +103,7 @@ static void shell_auto_complete(char *prefix)
             length =str_common(name_ptr, cmd_name);
             if (length < min_length)
                 min_length = length;
-            printf("%s"NEW_LINE, cmd_name);
+            PRINTF("%s"NEW_LINE, cmd_name);
         }
     }
     /* auto complete string */
@@ -111,7 +111,7 @@ static void shell_auto_complete(char *prefix)
     {
         strncpy(prefix, name_ptr, min_length);
     }
-    printf("%s%s", CONSOLE_FROME, prefix);
+    PRINTF("%s%s", CONSOLE_FROME, prefix);
     return ;
 }
     
@@ -161,7 +161,7 @@ int littleshell_interpret(const char *line)
     {
         fun_index->func(arg.argc,arg.argv);
     }
-    //printf("[%d][%s]\n",arg.argc,arg._buf);
+    //PRINTF("[%d][%s]\n",arg.argc,arg._buf);
     return 0;
 }
 
@@ -226,8 +226,8 @@ static char * littleshell_process_line(char *p)
 static void shell_handle_history(struct little_shell *shell)
 {
 
-    printf("\033[2K\r");
-    printf("%s%s", CONSOLE_FROME, shell->line);
+    PRINTF("\033[2K\r");
+    PRINTF("%s%s", CONSOLE_FROME, shell->line);
 }
 
 static void shell_push_history(struct little_shell *shell)
@@ -418,7 +418,7 @@ void littleshell_main_entry(void *pvParameters)
 
                     /* move the cursor to the origin position */
                     for (i = shell->line_curpos; i <= shell->line_position; i++)
-                        printf("\b");
+                        PRINTF("\b");
                 }
                 else
                 {
@@ -441,7 +441,7 @@ void littleshell_main_entry(void *pvParameters)
                         PRINTF(NEW_LINE);
 
                         littleshell_interpret(p);
-                        //printf("[%s]\n",p);
+                        //PRINTF("[%s]\n",p);
                         //TODO deal with strings,end of deal echo console string
                         
                     }
