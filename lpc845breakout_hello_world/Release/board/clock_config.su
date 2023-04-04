@@ -1,0 +1,8 @@
+D:\work\localhost\LPC845\lpc845breakout_hello_world\drivers/fsl_clock.h:836:20:CLOCK_SetFroOscFreq	8	static
+D:\work\localhost\LPC845\lpc845breakout_hello_world\drivers/fsl_power.h:153:20:POWER_DisablePD	0	static
+D:\work\localhost\LPC845\lpc845breakout_hello_world\drivers/fsl_clock.h:612:20:CLOCK_SetCoreSysClkDiv.constprop	0	static
+../board/clock_config.c:80:6:BOARD_BootClockFRO18M	8	static
+../board/clock_config.c:45:6:BOARD_InitBootClocks	8	static
+../board/clock_config.c:125:6:BOARD_BootClockFRO24M	8	static
+../board/clock_config.c:168:6:BOARD_BootClockFRO30M	8	static
+../board/clock_config.c:214:6:BOARD_BootClockPll24M	16	static

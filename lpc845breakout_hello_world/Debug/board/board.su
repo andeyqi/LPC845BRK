@@ -1,0 +1,2 @@
+D:\work\localhost\LPC845\lpc845breakout_hello_world\drivers/fsl_clock.h:580:20:CLOCK_Select	16	static
+../board/board.c:25:10:BOARD_InitDebugConsole	16	static
