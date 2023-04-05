@@ -13,6 +13,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "littleshell.h"
+#include "fsl_iap.h"
+#include "trace_dump.h"
 
 #include <stdbool.h>
 /*******************************************************************************
@@ -31,36 +33,36 @@
  */
 #define START_TASK_PRIO        2
 #define START_STK_SIZE         128
-	TaskHandle_t StartTask_Handler;
-	void start_task(void *pvParameters);
-	
+    TaskHandle_t StartTask_Handler;
+    void start_task(void *pvParameters);
+    
 #define TASK1_TASK_PRIO        2
 #define TASK1_STK_SIZE         128
-	TaskHandle_t Task1Task_Handler;
-	void start_task1(void *pvParameters);
-	
+    TaskHandle_t Task1Task_Handler;
+    void start_task1(void *pvParameters);
+    
 #define SHELL_TASK_PRIO        2
 #define SHELL_STK_SIZE         256
-	TaskHandle_t ShellTask_Handler;
+    TaskHandle_t ShellTask_Handler;
 
 
 void start_task(void *pvParameters)
 {
-	while(1)
-	{
-		PRINTF("task1 .\r\n");
-		vTaskDelay(500);
-	}
+    while(1)
+    {
+        LED_GREEN_TOGGLE();
+        vTaskDelay(500);
+    }
 }
-	
-	
+    
+    
 void start_task1(void *pvParameters)
 {
-	while(1)
-	{
-		PRINTF("task2 .\r\n");
-		vTaskDelay(1000);
-	}
+    while(1)
+    {
+        LED_BLUE_TOGGLE();
+        vTaskDelay(5000);
+    }
 }
 
 
@@ -77,7 +79,9 @@ int main(void)
     BOARD_InitDebugConsole();
 
     /* Turn on LED RED */
-    LED_RED_INIT(LOGIC_LED_ON);
+    //LED_RED_INIT(LOGIC_LED_ON);
+    LED_GREEN_INIT(LOGIC_LED_OFF);
+    //LED_BLUE_INIT(LOGIC_LED_OFF);
 
     PRINTF("hello world.\r\n");
 
@@ -116,3 +120,84 @@ unsigned int led(char argc,char ** argv)
     return 1;
 }
 LTSH_FUNCTION_EXPORT(led,"test led on off");
+
+
+unsigned int add(char argc,char ** argv)
+{
+    int a,b;
+
+    a = atoi(argv[1]);
+    b = atoi(argv[2]);
+
+    PRINTF("%s + %s = %d \r\n",argv[1],argv[2],a+b);
+
+    return 1;
+}
+LTSH_FUNCTION_EXPORT(add,"mul a& b");
+
+unsigned int sub(char argc,char ** argv)
+{
+    int a,b;
+
+    a = atoi(argv[1]);
+    b = atoi(argv[2]);
+
+    PRINTF("%s - %s = %d \r\n",argv[1],argv[2],a-b);
+
+    return 1;
+}
+LTSH_FUNCTION_EXPORT(sub,"mul a& b");
+
+
+
+unsigned int iap(char argc,char ** argv)
+{
+    int cmd;
+    uint32_t partID = 0u;
+    uint32_t bootCodeVersion = 0u;
+    uint32_t * paddr;
+    status_t status;
+    static uint32_t s_PageBuf[FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES/4];
+    memset((void *)s_PageBuf,0x5a,FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES);
+
+    cmd = atoi(argv[1]);
+
+    switch(cmd)
+    {
+    case 1:
+        IAP_ReadPartID(&partID);
+        PRINTF("partID = %x.\r\n",partID);
+        break;
+    case 2:
+        IAP_ReadBootCodeVersion(&bootCodeVersion);
+        PRINTF("bootCodeVersion = %x.\r\n",bootCodeVersion);
+        break;
+    case 3:
+        PRINTF("dump page data.\r\n");
+        paddr =  (uint32_t *)(1023*FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES);
+        trace_word_stream(paddr,16);
+        break;
+    case 4:
+        PRINTF("erase page data.\r\n");
+        /* Erase sector before writing */
+        IAP_PrepareSectorForWrite(63, 63);
+        IAP_EraseSector(63, 63, SystemCoreClock);
+        status = IAP_BlankCheckSector(63, 63);
+        if (status != kStatus_IAP_Success)
+        {
+            PRINTF("\r\nSector erase failed\r\n");
+        }
+        break;
+    case 5:
+        PRINTF("write page data.\r\n");
+        /* First write a page */
+        IAP_PrepareSectorForWrite(63, 63);
+        IAP_CopyRamToFlash(1023 * FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES, &s_PageBuf[0],
+                       FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES, SystemCoreClock);
+        break;
+    }    
+
+}
+LTSH_FUNCTION_EXPORT(iap,"mul a& b");
+
+
