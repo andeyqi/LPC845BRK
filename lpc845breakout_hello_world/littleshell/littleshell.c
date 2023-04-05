@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "fsl_debug_console.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
 
 #define CONSOLE_FROME "#"
 #define NEW_LINE      "\r\n"
@@ -491,7 +494,7 @@ void littleshell_main_entry(void *pvParameters)
         }
         else
         {
-
+			vTaskDelay(1);
         }
     }   
 }

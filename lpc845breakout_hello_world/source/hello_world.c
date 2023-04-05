@@ -10,6 +10,8 @@
 #include "fsl_debug_console.h"
 #include "pin_mux.h"
 #include "board.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "littleshell.h"
 
 #include <stdbool.h>
@@ -27,6 +29,41 @@
 /*!
  * @brief Main function
  */
+#define START_TASK_PRIO        2
+#define START_STK_SIZE         128
+	TaskHandle_t StartTask_Handler;
+	void start_task(void *pvParameters);
+	
+#define TASK1_TASK_PRIO        2
+#define TASK1_STK_SIZE         128
+	TaskHandle_t Task1Task_Handler;
+	void start_task1(void *pvParameters);
+	
+#define SHELL_TASK_PRIO        2
+#define SHELL_STK_SIZE         256
+	TaskHandle_t ShellTask_Handler;
+
+
+void start_task(void *pvParameters)
+{
+	while(1)
+	{
+		PRINTF("task1 .\r\n");
+		vTaskDelay(500);
+	}
+}
+	
+	
+void start_task1(void *pvParameters)
+{
+	while(1)
+	{
+		PRINTF("task2 .\r\n");
+		vTaskDelay(1000);
+	}
+}
+
+
 int main(void)
 {
     char ch;
@@ -44,10 +81,28 @@ int main(void)
 
     PRINTF("hello world.\r\n");
 
-    while (1)
-    {
-        littleshell_main_entry(NULL);
-    }
+    xTaskCreate((TaskFunction_t )start_task,
+                (const char*    )"task1",
+                (uint16_t       )START_STK_SIZE,
+                (void*          )NULL,
+                (UBaseType_t    )START_TASK_PRIO,
+                (TaskHandle_t*  )&StartTask_Handler);
+
+    xTaskCreate((TaskFunction_t )start_task1,
+                (const char*    )"task2",
+                (uint16_t       )TASK1_STK_SIZE,
+                (void*          )NULL,
+                (UBaseType_t    )TASK1_TASK_PRIO,
+                (TaskHandle_t*  )&Task1Task_Handler);
+
+    xTaskCreate((TaskFunction_t )littleshell_main_entry,
+                (const char*    )"shell",
+                (uint16_t       )SHELL_STK_SIZE,
+                (void*          )NULL,
+                (UBaseType_t    )SHELL_TASK_PRIO,
+                (TaskHandle_t*  )&Task1Task_Handler);
+    vTaskStartScheduler();
+
 }
 
 
