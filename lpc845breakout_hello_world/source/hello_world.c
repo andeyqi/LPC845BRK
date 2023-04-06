@@ -15,6 +15,7 @@
 #include "littleshell.h"
 #include "fsl_iap.h"
 #include "trace_dump.h"
+#include "drv_gpio.h"
 
 #include <stdbool.h>
 /*******************************************************************************
@@ -48,20 +49,32 @@
 
 void start_task(void *pvParameters)
 {
+    uint8_t out = 0;
+    lpc84x_pin_mode(32,PIN_MODE_OUTPUT);
     while(1)
     {
-        LED_GREEN_TOGGLE();
+        lpc84x_pin_write(32,out);
         vTaskDelay(500);
+        out = out ? 0 : 1;
     }
 }
     
     
 void start_task1(void *pvParameters)
 {
+    uint8_t new = 1,old = 1;
+
+    lpc84x_pin_mode(4,PIN_MODE_INPUT);
+
     while(1)
     {
-        LED_BLUE_TOGGLE();
-        vTaskDelay(5000);
+        new = lpc84x_pin_read(4);
+        if(new != old)
+        {
+            old = new;
+            PRINTF("K3 %s\r\n",(new ? "UP":"DOWN"));
+        }
+        vTaskDelay(100);
     }
 }
 
@@ -78,12 +91,10 @@ int main(void)
     BOARD_BootClockFRO30M();
     BOARD_InitDebugConsole();
 
-    /* Turn on LED RED */
-    //LED_RED_INIT(LOGIC_LED_ON);
-    LED_GREEN_INIT(LOGIC_LED_OFF);
-    //LED_BLUE_INIT(LOGIC_LED_OFF);
+    PRINTF("\r\n");
+    PRINTF("LPC845-BRK %s %s.\r\n",__DATE__,__TIME__);
+    PRINTF("\r\n");
 
-    PRINTF("hello world.\r\n");
 
     xTaskCreate((TaskFunction_t )start_task,
                 (const char*    )"task1",
@@ -199,5 +210,17 @@ unsigned int iap(char argc,char ** argv)
 
 }
 LTSH_FUNCTION_EXPORT(iap,"mul a& b");
+
+
+unsigned int clkdump(char argc,char ** argv)
+{
+    PRINTF("main clk %d.\r\n",CLOCK_GetFreq(kCLOCK_MainClk));
+    PRINTF("core clk %d.\r\n",CLOCK_GetFreq(kCLOCK_CoreSysClk));
+    PRINTF("fro clk %d.\r\n",CLOCK_GetFreq(kCLOCK_Fro));
+    PRINTF("fro div clk %d.\r\n",CLOCK_GetFreq(kCLOCK_FroDiv));
+    PRINTF("pllout clk %d.\r\n",CLOCK_GetFreq(kCLOCK_PllOut));
+    return 1;
+}
+LTSH_FUNCTION_EXPORT(clkdump,"mul a& b");
 
 
