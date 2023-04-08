@@ -7,6 +7,8 @@
 
 #define SCON_INDEX(offset) ((offset)/0x04u)
 
+#define PIN_NUM(port, no) (((((port) & 0x1u) << 5) | ((no) & 0x1Fu)))
+
 
 static const struct pin_index pins[] =
 {
@@ -55,6 +57,53 @@ static const struct pin_index pins[] =
 };
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
+
+
+/**
+  * @brief  pin get
+  * @param  name P0.1
+  * @retval pin number
+  */
+int lpc84x_pin_get(const char * name)
+{
+    int pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len;
+
+    name_len = strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -1;
+    }
+    
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -1;
+    }
+    
+    if ((name[1] >= '0') && (name[1] <= '1'))
+    {
+        hw_port_num = (int)(name[1] - '0');
+    }
+    else
+    {
+        return -1;
+    }
+    
+    for (i = 3; i < name_len; i++)
+    {
+        hw_pin_num *= 10;
+        hw_pin_num += name[i] - '0';
+    }
+
+    pin = PIN_NUM(hw_port_num, hw_pin_num);
+
+    return pin;
+
+}
+
+
 
 /**
   * @brief  get pin

@@ -50,10 +50,13 @@
 void start_task(void *pvParameters)
 {
     uint8_t out = 0;
-    lpc84x_pin_mode(32,PIN_MODE_OUTPUT);
+    /* get pin by name */
+    int pin = lpc84x_pin_get("P1.0");
+
+    lpc84x_pin_mode(pin,PIN_MODE_OUTPUT);
     while(1)
     {
-        lpc84x_pin_write(32,out);
+        lpc84x_pin_write(pin,out);
         vTaskDelay(500);
         out = out ? 0 : 1;
     }
@@ -63,12 +66,15 @@ void start_task(void *pvParameters)
 void start_task1(void *pvParameters)
 {
     uint8_t new = 1,old = 1;
+    
+    /* get pin by name */
+    int pin = lpc84x_pin_get("P0.4");
 
-    lpc84x_pin_mode(4,PIN_MODE_INPUT);
+    lpc84x_pin_mode(pin,PIN_MODE_INPUT);
 
     while(1)
     {
-        new = lpc84x_pin_read(4);
+        new = lpc84x_pin_read(pin);
         if(new != old)
         {
             old = new;

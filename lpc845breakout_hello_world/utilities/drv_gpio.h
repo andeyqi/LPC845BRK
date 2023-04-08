@@ -33,6 +33,7 @@ struct pin_index
 void lpc84x_pin_mode(int32_t pin, int32_t mode);
 void lpc84x_pin_write(int32_t pin, int32_t value);
 int lpc84x_pin_read(int32_t pin);
+int lpc84x_pin_get(const char * name);
 
 
 #ifdef __cplusplus
