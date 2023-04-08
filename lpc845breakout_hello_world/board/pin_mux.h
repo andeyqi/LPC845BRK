@@ -19,6 +19,8 @@
 extern "C" {
 #endif
 
+#define IOCON_PIO_MODE_INACT 0x00u   /*!<@brief No addition pin function */
+
 /*!
  * @brief Calls initialization functions.
  *

@@ -16,6 +16,8 @@
 #include "fsl_iap.h"
 #include "trace_dump.h"
 #include "drv_gpio.h"
+#include "cap_touch.h"
+#include "fsl_power.h"
 
 #include <stdbool.h>
 /*******************************************************************************
@@ -46,17 +48,22 @@
 #define SHELL_STK_SIZE         256
     TaskHandle_t ShellTask_Handler;
 
+#define CAPT_TASK_PRIO        2
+#define CAPT_STK_SIZE         256
+        TaskHandle_t CaptTask_Handler;
+
+
 
 void start_task(void *pvParameters)
 {
     uint8_t out = 0;
     /* get pin by name */
-    int pin = lpc84x_pin_get("P1.0");
+    //int pin = lpc84x_pin_get("P1.0");
 
-    lpc84x_pin_mode(pin,PIN_MODE_OUTPUT);
+    //lpc84x_pin_mode(pin,PIN_MODE_OUTPUT);
     while(1)
     {
-        lpc84x_pin_write(pin,out);
+        //lpc84x_pin_write(pin,out);
         vTaskDelay(500);
         out = out ? 0 : 1;
     }
@@ -88,6 +95,11 @@ void start_task1(void *pvParameters)
 int main(void)
 {
     char ch;
+    
+    /* Initialize board hardware. */
+    /* Attach main clock to CAPT */
+    CLOCK_Select(kCAPT_Clk_From_Fro);
+    POWER_DisablePD(kPDRUNCFG_PD_ACMP);
 
     /* Init board hardware. */
     /* Select the main clock as source clock of USART0 (debug console) */
@@ -96,6 +108,8 @@ int main(void)
     BOARD_InitBootPins();
     BOARD_BootClockFRO30M();
     BOARD_InitDebugConsole();
+
+    capt_touch_init();
 
     PRINTF("\r\n");
     PRINTF("LPC845-BRK %s %s.\r\n",__DATE__,__TIME__);
@@ -121,7 +135,16 @@ int main(void)
                 (uint16_t       )SHELL_STK_SIZE,
                 (void*          )NULL,
                 (UBaseType_t    )SHELL_TASK_PRIO,
-                (TaskHandle_t*  )&Task1Task_Handler);
+                (TaskHandle_t*  )&ShellTask_Handler);
+    
+    xTaskCreate((TaskFunction_t )capt_touch_main,
+                (const char*    )"touch",
+                (uint16_t       )CAPT_STK_SIZE,
+                (void*          )NULL,
+                (UBaseType_t    )CAPT_TASK_PRIO,
+                (TaskHandle_t*  )&CaptTask_Handler);
+
+                
     vTaskStartScheduler();
 
 }
@@ -215,7 +238,7 @@ unsigned int iap(char argc,char ** argv)
     }    
 
 }
-LTSH_FUNCTION_EXPORT(iap,"mul a& b");
+LTSH_FUNCTION_EXPORT(iap,"test iap api");
 
 
 unsigned int clkdump(char argc,char ** argv)
