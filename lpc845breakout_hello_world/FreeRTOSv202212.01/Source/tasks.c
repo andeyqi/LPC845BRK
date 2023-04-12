@@ -86,7 +86,7 @@
 /* If any of the following are set then task stacks are filled with a known
  * value so the high water mark can be determined.  If none of the following are
  * set then don't fill the stack so there is no unnecessary dependency on memset. */
-#if ( ( configCHECK_FOR_STACK_OVERFLOW > 1 ) || ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark2 == 1 ) )
+#if ( ( configCHECK_FOR_STACK_OVERFLOW > 1 ) || ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark2 == 1 ) || ( configUSE_STACK_MAX_USAGE == 1) )
     #define tskSET_NEW_STACKS_TO_KNOWN_VALUE    1
 #else
     #define tskSET_NEW_STACKS_TO_KNOWN_VALUE    0
@@ -544,7 +544,11 @@ static void prvInitialiseNewTask( TaskFunction_t pxTaskCode,
  * Called after a new task has been created and initialised to place the task
  * under the control of the scheduler.
  */
+#if ( configUSE_STACK_MAX_USAGE == 1 )
+static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ,uint32_t usStackDepth) PRIVILEGED_FUNCTION;
+#else
 static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
+#endif
 
 /*
  * freertos_tasks_c_additions_init() should only be called if the user definable
@@ -603,7 +607,11 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
             #endif /* tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE */
 
             prvInitialiseNewTask( pxTaskCode, pcName, ulStackDepth, pvParameters, uxPriority, &xReturn, pxNewTCB, NULL );
+        #if ( configUSE_STACK_MAX_USAGE == 1 )
+            prvAddNewTaskToReadyList( pxNewTCB ,ulStackDepth );
+        #else
             prvAddNewTaskToReadyList( pxNewTCB );
+        #endif
         }
         else
         {
@@ -653,8 +661,11 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
                                   pxTaskDefinition->uxPriority,
                                   pxCreatedTask, pxNewTCB,
                                   pxTaskDefinition->xRegions );
-
+        #if ( configUSE_STACK_MAX_USAGE == 1 )
+            prvAddNewTaskToReadyList( pxNewTCB , ( uint32_t ) pxTaskDefinition->usStackDepth );
+        #else
             prvAddNewTaskToReadyList( pxNewTCB );
+        #endif
             xReturn = pdPASS;
         }
 
@@ -704,8 +715,11 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
                                       pxTaskDefinition->uxPriority,
                                       pxCreatedTask, pxNewTCB,
                                       pxTaskDefinition->xRegions );
-
+            #if ( configUSE_STACK_MAX_USAGE == 1 )
+                prvAddNewTaskToReadyList( pxNewTCB ,( uint32_t ) pxTaskDefinition->usStackDepth);
+            #else
                 prvAddNewTaskToReadyList( pxNewTCB );
+            #endif
                 xReturn = pdPASS;
             }
         }
@@ -799,7 +813,11 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB ) PRIVILEGED_FUNCTION;
             #endif /* tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE */
 
             prvInitialiseNewTask( pxTaskCode, pcName, ( uint32_t ) usStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL );
+    #if ( configUSE_STACK_MAX_USAGE == 1 )
+            prvAddNewTaskToReadyList( pxNewTCB ,( uint32_t ) usStackDepth);
+    #else
             prvAddNewTaskToReadyList( pxNewTCB );
+    #endif
             xReturn = pdPASS;
         }
         else
@@ -1022,8 +1040,11 @@ static void prvInitialiseNewTask( TaskFunction_t pxTaskCode,
     }
 }
 /*-----------------------------------------------------------*/
-
+#if ( configUSE_STACK_MAX_USAGE == 1 )
+static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ,uint32_t usStackDepth)
+#else
 static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB )
+#endif
 {
     /* Ensure interrupts don't access the task lists while the lists are being
      * updated. */
@@ -1079,7 +1100,11 @@ static void prvAddNewTaskToReadyList( TCB_t * pxNewTCB )
             pxNewTCB->uxTCBNumber = uxTaskNumber;
         }
         #endif /* configUSE_TRACE_FACILITY */
+#if ( configUSE_STACK_MAX_USAGE == 1 )
+        traceTASK_CREATE( pxNewTCB ,usStackDepth );
+#else
         traceTASK_CREATE( pxNewTCB );
+#endif
 
         prvAddTaskToReadyList( pxNewTCB );
 

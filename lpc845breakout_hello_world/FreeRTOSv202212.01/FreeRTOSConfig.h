@@ -51,6 +51,8 @@
 #include <stdint.h>
 extern uint32_t SystemCoreClock;
 
+#define configUSE_STACK_MAX_USAGE		1
+#define configRECORD_STACK_HIGH_ADDRESS 1
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK				0
 #define configUSE_TICK_HOOK				0
@@ -59,7 +61,7 @@ extern uint32_t SystemCoreClock;
 #define configMAX_PRIORITIES			( 5 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 70 )
 #define configTOTAL_HEAP_SIZE			( ( size_t ) ( 6500 ) )
-#define configMAX_TASK_NAME_LEN			( 5 )
+#define configMAX_TASK_NAME_LEN			( 10 )
 #define configUSE_TRACE_FACILITY		1
 #define configUSE_16_BIT_TICKS			0
 #define configIDLE_SHOULD_YIELD			1

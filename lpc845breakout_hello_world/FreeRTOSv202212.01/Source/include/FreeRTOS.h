@@ -604,7 +604,15 @@
 #endif
 
 #ifndef traceTASK_CREATE
-    #define traceTASK_CREATE( pxNewTCB )
+    #if ( configUSE_STACK_MAX_USAGE == 1 )
+        #define traceTASK_CREATE( pxNewTCB,usStackDepth )\
+        {\
+            extern void task_create_hook(char * name ,unsigned int deep,unsigned int * stack_tail);\
+            task_create_hook(pxNewTCB->pcTaskName,usStackDepth,pxNewTCB->pxStack);\
+        }
+    #else
+        #define traceTASK_CREATE( pxNewTCB,usStackDepth )
+    #endif
 #endif
 
 #ifndef traceTASK_CREATE_FAILED
