@@ -19,8 +19,6 @@
 extern "C" {
 #endif
 
-#define IOCON_PIO_MODE_INACT 0x00u   /*!<@brief No addition pin function */
-
 /*!
  * @brief Calls initialization functions.
  *
@@ -30,6 +28,7 @@ void BOARD_InitBootPins(void);
 #define IOCON_PIO_CLKDIV0 0x00u      /*!<@brief IOCONCLKDIV0 */
 #define IOCON_PIO_HYS_EN 0x20u       /*!<@brief Enable hysteresis */
 #define IOCON_PIO_INV_DI 0x00u       /*!<@brief Input not invert */
+#define IOCON_PIO_MODE_INACT 0x00u   /*!<@brief No addition pin function */
 #define IOCON_PIO_MODE_PULLUP 0x10u  /*!<@brief Selects pull-up function */
 #define IOCON_PIO_OD_DI 0x00u        /*!<@brief Disables Open-drain function */
 #define IOCON_PIO_SMODE_BYPASS 0x00u /*!<@brief Bypass input filter */
@@ -47,6 +46,27 @@ void BOARD_InitBootPins(void);
 #define BOARD_DEBUG_UART_TX_PIN 25U                   /*!<@brief PORT pin number */
 #define BOARD_DEBUG_UART_TX_PIN_MASK (1U << 25U)      /*!<@brief PORT pin mask */
                                                       /* @} */
+
+/*! @name CAPT_X0 (number 9), S1/PIO0_31/CAPT_X0
+  @{ */
+#define BOARD_CAPX_PORT 0U                   /*!<@brief PORT device index: 0 */
+#define BOARD_CAPX_PIN 31U                   /*!<@brief PORT pin number */
+#define BOARD_CAPX_PIN_MASK (1U << 31U)      /*!<@brief PORT pin mask */
+                                             /* @} */
+
+/*! @name CAPT_YL (number 1), S1/PIO1_8/CAPT_YL
+  @{ */
+#define BOARD_CAPY_LOW_PORT 1U                  /*!<@brief PORT device index: 1 */
+#define BOARD_CAPY_LOW_PIN 8U                   /*!<@brief PORT pin number */
+#define BOARD_CAPY_LOW_PIN_MASK (1U << 8U)      /*!<@brief PORT pin mask */
+                                                /* @} */
+
+/*! @name CAPT_YH (number 3), S1/PIO1_9/CAPT_YH
+  @{ */
+#define BOARD_CAPY_HIGH_PORT 1U                  /*!<@brief PORT device index: 1 */
+#define BOARD_CAPY_HIGH_PIN 9U                   /*!<@brief PORT pin number */
+#define BOARD_CAPY_HIGH_PIN_MASK (1U << 9U)      /*!<@brief PORT pin mask */
+                                                 /* @} */
 
 /*!
  * @brief Configures pin routing and optionally pin electrical features.

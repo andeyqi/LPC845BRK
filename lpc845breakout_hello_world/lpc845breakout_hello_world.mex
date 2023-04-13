@@ -91,6 +91,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="Peripheral" resourceId="CAPT" description="Peripheral CAPT is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
@@ -121,6 +126,36 @@
                   <pin peripheral="USART0" signal="TXD" pin_num="19" pin_signal="PIO0_25">
                      <pin_features>
                         <pin_feature name="mode" value="pullUp"/>
+                        <pin_feature name="invert" value="disabled"/>
+                        <pin_feature name="hysteresis" value="enabled"/>
+                        <pin_feature name="opendrain" value="disabled"/>
+                        <pin_feature name="smode" value="bypass"/>
+                        <pin_feature name="clkdiv" value="div0"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="CAPT" signal="CAPTX, 0" pin_num="9" pin_signal="PIO0_31/CAPT_X0">
+                     <pin_features>
+                        <pin_feature name="mode" value="inactive"/>
+                        <pin_feature name="invert" value="disabled"/>
+                        <pin_feature name="hysteresis" value="enabled"/>
+                        <pin_feature name="opendrain" value="disabled"/>
+                        <pin_feature name="smode" value="bypass"/>
+                        <pin_feature name="clkdiv" value="div0"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="CAPT" signal="CAPTYL" pin_num="1" pin_signal="PIO1_8/CAPT_YL">
+                     <pin_features>
+                        <pin_feature name="mode" value="inactive"/>
+                        <pin_feature name="invert" value="disabled"/>
+                        <pin_feature name="hysteresis" value="enabled"/>
+                        <pin_feature name="opendrain" value="disabled"/>
+                        <pin_feature name="smode" value="bypass"/>
+                        <pin_feature name="clkdiv" value="div0"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="CAPT" signal="CAPTYH" pin_num="3" pin_signal="PIO1_9/CAPT_YH">
+                     <pin_features>
+                        <pin_feature name="mode" value="inactive"/>
                         <pin_feature name="invert" value="disabled"/>
                         <pin_feature name="hysteresis" value="enabled"/>
                         <pin_feature name="opendrain" value="disabled"/>

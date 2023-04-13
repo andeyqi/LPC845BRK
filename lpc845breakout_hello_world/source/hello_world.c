@@ -241,15 +241,6 @@ unsigned int iap(char argc,char ** argv)
 LTSH_FUNCTION_EXPORT(iap,"test iap api");
 
 
-unsigned int clkdump(char argc,char ** argv)
-{
-    PRINTF("main clk %d.\r\n",CLOCK_GetFreq(kCLOCK_MainClk));
-    PRINTF("core clk %d.\r\n",CLOCK_GetFreq(kCLOCK_CoreSysClk));
-    PRINTF("fro clk %d.\r\n",CLOCK_GetFreq(kCLOCK_Fro));
-    PRINTF("fro div clk %d.\r\n",CLOCK_GetFreq(kCLOCK_FroDiv));
-    PRINTF("pllout clk %d.\r\n",CLOCK_GetFreq(kCLOCK_PllOut));
-    return 1;
-}
-LTSH_FUNCTION_EXPORT(clkdump,"mul a& b");
+
 
 
