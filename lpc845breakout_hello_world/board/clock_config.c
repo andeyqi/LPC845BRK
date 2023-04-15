@@ -35,7 +35,7 @@ board: LPC845BREAKOUT
  ******************************************************************************/
 void BOARD_InitBootClocks(void)
 {
-    BOARD_BootClockFRO18M();
+    BOARD_BootClockFRO30M();
 }
 
 /*******************************************************************************
@@ -44,11 +44,10 @@ void BOARD_InitBootClocks(void)
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!Configuration
 name: BOARD_BootClockFRO18M
-called_from_default_init: true
 outputs:
-- {id: FROHF_clock.outFreq, value: 18 MHz}
+- {id: FROHF_clock.outFreq, value: 30 MHz}
 - {id: LowPower_clock.outFreq, value: 10 kHz}
-- {id: System_clock.outFreq, value: 18 MHz}
+- {id: System_clock.outFreq, value: 30 MHz}
 - {id: divto750k_clock.outFreq, value: 750 kHz}
 settings:
 - {id: SYSCON.ADCCLKSEL.sel, value: NO_CLOCK}
@@ -57,9 +56,8 @@ settings:
 - {id: SYSCON.FRG1CLKSEL.sel, value: NO_CLOCK}
 - {id: SYSCON.FRO_DIRECT.sel, value: SYSCON.fro_osc}
 - {id: SYSCON.SCTCLKSEL.sel, value: NO_CLOCK}
+- {id: SYSCON.SYSAHBCLKDIV.scale, value: '1', locked: true}
 - {id: SYSCON_PDRUNCFG0_PDEN_PLL_CFG, value: Power_down}
-sources:
-- {id: SYSCON.fro_osc.outFreq, value: 18 MHz}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 /*******************************************************************************
@@ -74,7 +72,7 @@ void BOARD_BootClockFRO18M(void)
     /*!< Set up FRO */
     POWER_DisablePD(kPDRUNCFG_PD_FRO_OUT);                   /*!< Ensure FRO is on  */
     POWER_DisablePD(kPDRUNCFG_PD_FRO);                      /*!< Ensure FRO is on  */
-    CLOCK_SetFroOscFreq(kCLOCK_FroOscOut18M);                    /*!< Set up FRO freq */
+    CLOCK_SetFroOscFreq(kCLOCK_FroOscOut30M);                    /*!< Set up FRO freq */
     CLOCK_SetFroOutClkSrc(kCLOCK_FroSrcFroOsc);                    /*!< Set FRO clock source */
     POWER_DisablePD(kPDRUNCFG_PD_SYSOSC);                  /*!< Ensure Main osc is on */
     CLOCK_Select(kEXT_Clk_From_SysOsc);                     /*!<select external clock source to sys_osc */
@@ -135,10 +133,12 @@ void BOARD_BootClockFRO24M(void)
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!Configuration
 name: BOARD_BootClockFRO30M
+called_from_default_init: true
 outputs:
 - {id: FROHF_clock.outFreq, value: 30 MHz}
 - {id: LowPower_clock.outFreq, value: 10 kHz}
 - {id: System_clock.outFreq, value: 30 MHz}
+- {id: WWDT_clock.outFreq, value: 600 kHz}
 - {id: divto750k_clock.outFreq, value: 750 kHz}
 settings:
 - {id: SYSCON.ADCCLKSEL.sel, value: NO_CLOCK}
@@ -148,6 +148,9 @@ settings:
 - {id: SYSCON.FRO_DIRECT.sel, value: SYSCON.fro_osc}
 - {id: SYSCON.SCTCLKSEL.sel, value: NO_CLOCK}
 - {id: SYSCON_PDRUNCFG0_PDEN_PLL_CFG, value: Power_down}
+- {id: SYSCON_PDRUNCFG0_PDEN_WDT_OSC_CFG, value: Power_up}
+sources:
+- {id: SYSCON.wwdt_osc.outFreq, value: 600 kHz}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 /*******************************************************************************
@@ -166,6 +169,8 @@ void BOARD_BootClockFRO30M(void)
     CLOCK_SetFroOutClkSrc(kCLOCK_FroSrcFroOsc);                    /*!< Set FRO clock source */
     POWER_DisablePD(kPDRUNCFG_PD_SYSOSC);                  /*!< Ensure Main osc is on */
     CLOCK_Select(kEXT_Clk_From_SysOsc);                     /*!<select external clock source to sys_osc */
+    POWER_DisablePD(kPDRUNCFG_PD_WDT_OSC);                    /*!< Ensure wwdt osc is on */
+    CLOCK_InitWdtOsc(kCLOCK_WdtAnaFreq600KHZ ,(0+1)*2);
     CLOCK_SetMainClkSrc(kCLOCK_MainClkSrcFro);            /*!< select fro for main clock */
     CLOCK_SetCoreSysClkDiv(1U);
     /*!< Set SystemCoreClock variable. */

@@ -106,7 +106,7 @@ int main(void)
     CLOCK_Select(BOARD_DEBUG_USART_CLK_ATTACH);
 
     BOARD_InitBootPins();
-    BOARD_BootClockFRO30M();
+    BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
 
     capt_touch_init();

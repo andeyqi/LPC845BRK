@@ -38,14 +38,14 @@ void BOARD_InitBootClocks(void);
 /*******************************************************************************
  * Definitions for BOARD_BootClockFRO18M configuration
  ******************************************************************************/
-#define BOARD_BOOTCLOCKFRO18M_CORE_CLOCK           18000000U  /*!< Core clock frequency: 18000000Hz */
+#define BOARD_BOOTCLOCKFRO18M_CORE_CLOCK           30000000U  /*!< Core clock frequency: 30000000Hz */
 
 
 /* Clock outputs (values are in Hz): */
 #define BOARD_BOOTCLOCKFRO18M_ADC_CLOCK               0UL
 #define BOARD_BOOTCLOCKFRO18M_CAPT_CLOCK              0UL
 #define BOARD_BOOTCLOCKFRO18M_CLKOUT_CLOCK            0UL
-#define BOARD_BOOTCLOCKFRO18M_FROHF_CLOCK             18000000UL
+#define BOARD_BOOTCLOCKFRO18M_FROHF_CLOCK             30000000UL
 #define BOARD_BOOTCLOCKFRO18M_I2C0_CLOCK              0UL
 #define BOARD_BOOTCLOCKFRO18M_I2C1_CLOCK              0UL
 #define BOARD_BOOTCLOCKFRO18M_I2C2_CLOCK              0UL
@@ -62,7 +62,7 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKFRO18M_SPI0_CLOCK              0UL
 #define BOARD_BOOTCLOCKFRO18M_SPI1_CLOCK              0UL
 #define BOARD_BOOTCLOCKFRO18M_SYSPLL_CLOCK            0UL
-#define BOARD_BOOTCLOCKFRO18M_SYSTEM_CLOCK            18000000UL
+#define BOARD_BOOTCLOCKFRO18M_SYSTEM_CLOCK            30000000UL
 #define BOARD_BOOTCLOCKFRO18M_UART0_CLOCK             0UL
 #define BOARD_BOOTCLOCKFRO18M_UART1_CLOCK             0UL
 #define BOARD_BOOTCLOCKFRO18M_UART2_CLOCK             0UL
@@ -180,7 +180,7 @@ void BOARD_BootClockFRO24M(void);
 #define BOARD_BOOTCLOCKFRO30M_UART2_CLOCK             0UL
 #define BOARD_BOOTCLOCKFRO30M_UART3_CLOCK             0UL
 #define BOARD_BOOTCLOCKFRO30M_UART4_CLOCK             0UL
-#define BOARD_BOOTCLOCKFRO30M_WWDT_CLOCK              0UL
+#define BOARD_BOOTCLOCKFRO30M_WWDT_CLOCK              600000UL
 #define BOARD_BOOTCLOCKFRO30M_DIVTO750K_CLOCK         750000UL
 
 /*******************************************************************************
