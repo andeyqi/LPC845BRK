@@ -411,8 +411,17 @@
 #ifndef traceTASK_SWITCHED_IN
 
 /* Called after a task has been selected to run.  pxCurrentTCB holds a pointer
- * to the task control block of the selected task. */
+to the task control block of the selected task. */
+#if (configUSE_PERF_CNT == 1)
+    #define traceTASK_SWITCHED_IN()\
+    {\
+        extern void vApplicationTaskSwitchInHook(void * name,void *ptTCB);\
+        vApplicationTaskSwitchInHook((void *)pxCurrentTCB->pcTaskName,(void *)pxCurrentTCB->pxStack);\
+    }
+#else
     #define traceTASK_SWITCHED_IN()
+#endif /* end of configUSE_PERF_CNT */
+
 #endif
 
 #ifndef traceINCREASE_TICK_COUNT
@@ -434,9 +443,15 @@
 
 #ifndef traceTASK_SWITCHED_OUT
 
-/* Called before a task has been selected to run.  pxCurrentTCB holds a pointer
- * to the task control block of the task being switched out. */
+#if (configUSE_PERF_CNT == 1)
+    #define traceTASK_SWITCHED_OUT()\
+    {\
+        extern void vApplicationTaskSwitchOutHook(void *ptTCB);\
+        vApplicationTaskSwitchOutHook((void *)pxCurrentTCB->pxStack);\
+    }
+#else
     #define traceTASK_SWITCHED_OUT()
+#endif /* end of configUSE_PERF_CNT */
 #endif
 
 #ifndef traceTASK_PRIORITY_INHERIT
