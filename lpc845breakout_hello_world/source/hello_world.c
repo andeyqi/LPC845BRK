@@ -215,7 +215,7 @@ unsigned int iap(char argc,char ** argv)
     case 3:
         PRINTF("dump page data.\r\n");
         paddr =  (uint32_t *)(1023*FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES);
-        trace_word_stream(paddr,16);
+        trace_word_stream(paddr,16,0);
         break;
     case 4:
         PRINTF("erase page data.\r\n");
