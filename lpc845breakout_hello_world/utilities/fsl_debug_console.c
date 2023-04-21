@@ -136,18 +136,20 @@ int DbgConsole_Printf(const char *fmt_s, ...)
     return result;
 }
 
+#include "usart_adapter.h"
+
 /* See fsl_debug_console.h for documentation of this function. */
 int DbgConsole_Vprintf(const char *fmt_s, va_list formatStringArg)
 {
     int result = 0;
 
     /* Do nothing if the debug UART is not initialized. */
-    if (kSerialPort_None == s_debugConsole.serial_port_type)
-    {
-        return -1;
-    }
+    //if (kSerialPort_None == s_debugConsole.serial_port_type)
+    //{
+    //    return -1;
+    //}
 
-    result = DbgConsole_PrintfFormattedData(DbgConsole_Putchar, fmt_s, formatStringArg);
+    result = DbgConsole_PrintfFormattedData(shell_uart_putchar, fmt_s, formatStringArg);
 
     return result;
 }

@@ -18,6 +18,7 @@
 #include "drv_gpio.h"
 #include "cap_touch.h"
 #include "fsl_power.h"
+#include "usart_adapter.h"
 
 #include <stdbool.h>
 /*******************************************************************************
@@ -107,7 +108,8 @@ int main(void)
 
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
-    BOARD_InitDebugConsole();
+    //BOARD_InitDebugConsole();
+    shell_uart_init();
 
     capt_touch_init();
 

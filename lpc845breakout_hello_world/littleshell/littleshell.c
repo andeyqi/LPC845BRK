@@ -7,6 +7,7 @@
 #include "fsl_debug_console.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "usart_adapter.h"
 
 
 #define CONSOLE_FROME "#"
@@ -286,10 +287,10 @@ void littleshell_main_entry(void *pvParameters)
     PRINTF("%s",CONSOLE_FROME);
     while(1)
     {    
-        int ch = 100;
+        uint8_t ch = 100;
         //if (linelen >= sizeof(line))
         //    continue;
-        if((ch = GETCHAR()) != -1)
+        if((shell_uart_getchar(&ch)) != 0)
         {
             /*
              * handle control key
@@ -494,7 +495,7 @@ void littleshell_main_entry(void *pvParameters)
         }
         else
         {
-			vTaskDelay(1);
+            vTaskDelay(100);
         }
     }   
 }

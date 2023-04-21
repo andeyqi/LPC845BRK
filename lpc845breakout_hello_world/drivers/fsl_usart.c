@@ -1003,8 +1003,8 @@ void USART_TransferHandleIRQ(USART_Type *base, usart_handle_t *handle)
 }
 
 #if defined(USART0)
-void USART0_DriverIRQHandler(void);
-void USART0_DriverIRQHandler(void)
+__attribute__ ((weak)) void USART0_DriverIRQHandler(void);
+__attribute__ ((weak)) void USART0_DriverIRQHandler(void)
 {
     s_usartIsr(USART0, s_usartHandle[0]);
 }
