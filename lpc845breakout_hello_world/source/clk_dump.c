@@ -14,6 +14,7 @@ enum clock_node_id
     CLK_NODE_SYSTEM,
     CLK_NODE_UART0,
     CLK_NODE_UART1,
+    CLK_NODE_CAPT,
     CLK_NODE_MAX
 };
 
@@ -131,6 +132,43 @@ static uint32_t lpc845_get_uart_clk(struct clock_node * node)
 
 }
 
+static uint32_t lpc845_get_capt_clk(struct clock_node * node)
+{
+    uint8_t parent = 0xffu;
+    uint32_t rate = 0x00;
+    
+    if(node->get_parent)
+    {
+        parent = node->get_parent(node);
+    }
+    
+    /* 0-fro_oscout is divided by 2 (normal boot) or 16 (low power boot), depending on FAIM low power boot value.
+     * 1-FRO clock is direct from FRO oscillator
+    */
+    switch(parent)
+    {
+    case 0:
+        rate = CLOCK_GetFreq(kCLOCK_Fro);
+        break;
+    case 1:
+        rate = CLOCK_GetFreq(kCLOCK_MainClk);
+        break;
+    case 2:
+        rate = CLOCK_GetFreq(kCLOCK_PllOut);
+        break;
+    case 3:
+        rate = CLOCK_GetFreq(kCLOCK_FroDiv);
+        break;
+    case 4:
+        rate = CLOCK_GetFreq(kCLOCK_WdtOsc);
+        break;    
+    default:
+        break;
+    }
+    return rate;
+
+}
+
 
 static uint32_t lpc845_get_clock_rate(struct clock_node * node)
 {
@@ -187,6 +225,9 @@ static uint8_t lpc845_get_parent(struct clock_node * node)
     case CLK_NODE_UART1:
         parent = SYSCON->FCLKSEL[1] & 0x07;
         break;
+    case CLK_NODE_CAPT:
+        parent = SYSCON->CAPTCLKSEL & 0x07;
+        break;        
     default:
         break;
     }
@@ -321,6 +362,29 @@ static clock_node_t  uart1_clk =
     .get_parent = lpc845_get_parent,
 };
 
+static clock_node_t  capt_clk =
+{
+    .name = "capt_clk",
+    .rate = 0xffffffffu,
+    .id = CLK_NODE_CAPT,
+    .parents_num = 5,
+    .is_update = 0,
+    .mux = 0xff,
+    .muxhelp = "0-FRO 1-Main clock 2-SYS PLL 3-FRO_DIV = FRO/2 clock 4-Watchdog oscillator 5~7-none",
+    .parents[0] = &fro,
+    .parents[1] = &main_clk,
+    .parents[2] = NULL,
+    .parents[3] = NULL,
+    .parents[4] = NULL,
+    .parents[5] = NULL,
+    .parents[6] = NULL,
+    .parents[7] = NULL,
+    .get_rate = lpc845_get_capt_clk,
+    .set_rate = NULL,
+    .get_parent = lpc845_get_parent,
+};
+
+
 void update_clk_node(struct clock_node * node)
 {
     if(!node->is_update)
@@ -437,6 +501,9 @@ unsigned int clkdump(char argc,char ** argv)
         break;
     case 6:
         trace_clk_node(&uart1_clk);
+        break; 
+    case 7:
+        trace_clk_node(&capt_clk);
         break;    
     default:
         break;
