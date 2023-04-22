@@ -11,6 +11,7 @@ enum clock_node_id
     CLK_NODE_MAIN_CLK_PRE_PLL,
     CLK_NODE_FRO,
     CLK_NODE_FRO_OSC,
+    CLK_NODE_SYSTEM,
     CLK_NODE_MAX
 };
 
@@ -108,6 +109,9 @@ static uint32_t lpc845_get_clock_rate(struct clock_node * node)
     case CLK_NODE_FRO_OSC:
         rate = CLOCK_GetFreq(kCLOCK_Fro);
         break;
+    case CLK_NODE_SYSTEM:
+        rate = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+        break;
     default:
         break;
     }
@@ -129,6 +133,9 @@ static uint8_t lpc845_get_parent(struct clock_node * node)
     case CLK_NODE_FRO:
         parent = (SYSCON->FROOSCCTRL & SYSCON_FROOSCCTRL_FRO_DIRECT_MASK)>>SYSCON_FROOSCCTRL_FRO_DIRECT_SHIFT;
         break;
+    case CLK_NODE_SYSTEM:
+        parent = 0;
+        break;
     default:
         break;
     }
@@ -144,7 +151,7 @@ static clock_node_t fro_osc =
     .parents_num = 0,
     .is_update = 0,
     .mux = 0xff,
-    .muxhelp = "root clock fro osc",
+    .muxhelp = NULL,
     .get_rate = lpc845_get_clock_rate,
     .set_rate = NULL,
     .get_parent = NULL,    
@@ -202,6 +209,22 @@ static clock_node_t  main_clk =
     .set_rate = NULL,
     .get_parent = lpc845_get_parent,
 };
+
+static clock_node_t  system_clk =
+{
+    .name = "system_clk",
+    .rate = 0xffffffffu,
+    .id = CLK_NODE_SYSTEM,
+    .parents_num = 1,
+    .is_update = 0,
+    .mux = 0xff,
+    .muxhelp = NULL,
+    .parents[0] = &main_clk,
+    .get_rate = lpc845_get_clock_rate,
+    .set_rate = NULL,
+    .get_parent = lpc845_get_parent,
+};
+
 
 void update_clk_node(struct clock_node * node)
 {
@@ -275,8 +298,9 @@ void trace_clk_node(struct clock_node * node)
     {
         p_node = rt_list_entry(pos, clock_node_t, list);
         PRINTF("%s *%s\r\n",root_clk[i_loop],p_node->name);
-        PRINTF("%s [rate]%d\r\n",root_clk[i_loop+1],p_node->rate);  
-        PRINTF("%s [%s]:[%d]\r\n",root_clk[i_loop+1],p_node->muxhelp,p_node->mux);  
+        PRINTF("%s [rate]%d\r\n",root_clk[i_loop+1],p_node->rate);
+        if(p_node->muxhelp)
+            PRINTF("%s [%s]:[%d]\r\n",root_clk[i_loop+1],p_node->muxhelp,p_node->mux);  
         i_loop++;
     }
 }
@@ -308,7 +332,7 @@ unsigned int clkdump(char argc,char ** argv)
         dump_clk_node(&fro_osc);
         break;
     case 4:
-        trace_clk_node(&main_clk);
+        trace_clk_node(&system_clk);
         break;
     default:
         break;
