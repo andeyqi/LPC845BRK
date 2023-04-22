@@ -12,6 +12,7 @@ enum clock_node_id
     CLK_NODE_FRO,
     CLK_NODE_FRO_OSC,
     CLK_NODE_SYSTEM,
+    CLK_NODE_UART0,
     CLK_NODE_MAX
 };
 
@@ -91,6 +92,45 @@ static uint32_t lpc845_get_fro_clk(struct clock_node * node)
 
 }
 
+
+static uint32_t lpc845_get_uart_clk(struct clock_node * node)
+{
+    uint8_t parent = 0xffu;
+    uint32_t rate = 0x00;
+    
+    if(node->get_parent)
+    {
+        parent = node->get_parent(node);
+    }
+    
+    /* 0-fro_oscout is divided by 2 (normal boot) or 16 (low power boot), depending on FAIM low power boot value.
+     * 1-FRO clock is direct from FRO oscillator
+    */
+    switch(parent)
+    {
+    case 0:
+        rate = CLOCK_GetFreq(kCLOCK_Fro);
+        break;
+    case 1:
+        rate = CLOCK_GetFreq(kCLOCK_MainClk);
+        break;
+    case 2:
+        rate = CLOCK_GetFreq(kCLOCK_Frg0);
+        break;
+    case 3:
+        rate = CLOCK_GetFreq(kCLOCK_Frg1);
+        break;
+    case 4:
+        rate = CLOCK_GetFreq(kCLOCK_FroDiv);
+        break;    
+    default:
+        break;
+    }
+    return rate;
+
+}
+
+
 static uint32_t lpc845_get_clock_rate(struct clock_node * node)
 {
     uint32_t rate = 0u;
@@ -111,6 +151,9 @@ static uint32_t lpc845_get_clock_rate(struct clock_node * node)
         break;
     case CLK_NODE_SYSTEM:
         rate = CLOCK_GetFreq(kCLOCK_CoreSysClk);
+        break;
+    case CLK_NODE_UART0:
+        rate = lpc845_get_uart_clk(node);
         break;
     default:
         break;
@@ -135,6 +178,9 @@ static uint8_t lpc845_get_parent(struct clock_node * node)
         break;
     case CLK_NODE_SYSTEM:
         parent = 0;
+        break;
+    case CLK_NODE_UART0:
+        parent = SYSCON->FCLKSEL[0] & 0x07;
         break;
     default:
         break;
@@ -221,6 +267,26 @@ static clock_node_t  system_clk =
     .muxhelp = NULL,
     .parents[0] = &main_clk,
     .get_rate = lpc845_get_clock_rate,
+    .set_rate = NULL,
+    .get_parent = lpc845_get_parent,
+};
+
+
+static clock_node_t  uart0_clk =
+{
+    .name = "uart0_clk",
+    .rate = 0xffffffffu,
+    .id = CLK_NODE_UART0,
+    .parents_num = 5,
+    .is_update = 0,
+    .mux = 0xff,
+    .muxhelp = "0-FRO 1-Main clock 2-FRG0 clock 3-FRG1 clock 4-FRO_DIV = FRO / 2",
+    .parents[0] = &fro,
+    .parents[1] = &main_clk,
+    .parents[2] = &fro,
+    .parents[3] = NULL,
+    .parents[4] = NULL,
+    .get_rate = lpc845_get_uart_clk,
     .set_rate = NULL,
     .get_parent = lpc845_get_parent,
 };
@@ -333,6 +399,9 @@ unsigned int clkdump(char argc,char ** argv)
         break;
     case 4:
         trace_clk_node(&system_clk);
+        break;    
+    case 5:
+        trace_clk_node(&uart0_clk);
         break;
     default:
         break;
