@@ -13,6 +13,7 @@ enum clock_node_id
     CLK_NODE_FRO_OSC,
     CLK_NODE_SYSTEM,
     CLK_NODE_UART0,
+    CLK_NODE_UART1,
     CLK_NODE_MAX
 };
 
@@ -26,7 +27,7 @@ typedef struct clock_node
     uint8_t is_update;
     uint8_t parents_num;
     uint8_t mux;
-    struct clock_node * parents[6];
+    struct clock_node * parents[8];
     /*clock node ops*/
     uint32_t (*get_rate)(struct clock_node * node);
     int (*set_rate)(struct clock_node * node,uint32_t rate);
@@ -153,6 +154,7 @@ static uint32_t lpc845_get_clock_rate(struct clock_node * node)
         rate = CLOCK_GetFreq(kCLOCK_CoreSysClk);
         break;
     case CLK_NODE_UART0:
+    case CLK_NODE_UART1:
         rate = lpc845_get_uart_clk(node);
         break;
     default:
@@ -181,6 +183,9 @@ static uint8_t lpc845_get_parent(struct clock_node * node)
         break;
     case CLK_NODE_UART0:
         parent = SYSCON->FCLKSEL[0] & 0x07;
+        break;
+    case CLK_NODE_UART1:
+        parent = SYSCON->FCLKSEL[1] & 0x07;
         break;
     default:
         break;
@@ -280,17 +285,41 @@ static clock_node_t  uart0_clk =
     .parents_num = 5,
     .is_update = 0,
     .mux = 0xff,
-    .muxhelp = "0-FRO 1-Main clock 2-FRG0 clock 3-FRG1 clock 4-FRO_DIV = FRO / 2",
+    .muxhelp = "0-FRO 1-Main clock 2-FRG0 clock 3-FRG1 clock 4-FRO_DIV = FRO / 2 5~7-none",
     .parents[0] = &fro,
     .parents[1] = &main_clk,
     .parents[2] = &fro,
     .parents[3] = NULL,
     .parents[4] = NULL,
+    .parents[5] = NULL,
+    .parents[6] = NULL,
+    .parents[7] = NULL,
     .get_rate = lpc845_get_uart_clk,
     .set_rate = NULL,
     .get_parent = lpc845_get_parent,
 };
 
+static clock_node_t  uart1_clk =
+{
+    .name = "uart1_clk",
+    .rate = 0xffffffffu,
+    .id = CLK_NODE_UART1,
+    .parents_num = 5,
+    .is_update = 0,
+    .mux = 0xff,
+    .muxhelp = "0-FRO 1-Main clock 2-FRG0 clock 3-FRG1 clock 4-FRO_DIV = FRO / 2 5~7-none",
+    .parents[0] = &fro,
+    .parents[1] = &main_clk,
+    .parents[2] = &fro,
+    .parents[3] = NULL,
+    .parents[4] = NULL,
+    .parents[5] = NULL,
+    .parents[6] = NULL,
+    .parents[7] = NULL,
+    .get_rate = lpc845_get_uart_clk,
+    .set_rate = NULL,
+    .get_parent = lpc845_get_parent,
+};
 
 void update_clk_node(struct clock_node * node)
 {
@@ -353,10 +382,13 @@ void trace_clk_node(struct clock_node * node)
         rt_list_insert_after(&head,&p_node->list);
         if(p_node->parents_num)
             p_node = p_node->parents[p_node->mux];
-    }while(p_node->parents_num);
+    }while(p_node && p_node->parents_num);
 
-    update_clk_node(p_node);
-    rt_list_insert_after(&head,&p_node->list);
+    if(p_node)
+    {
+        update_clk_node(p_node);
+        rt_list_insert_after(&head,&p_node->list);
+    }
     
     PRINTF("\r\n\r\n");
 
@@ -403,6 +435,9 @@ unsigned int clkdump(char argc,char ** argv)
     case 5:
         trace_clk_node(&uart0_clk);
         break;
+    case 6:
+        trace_clk_node(&uart1_clk);
+        break;    
     default:
         break;
     }
