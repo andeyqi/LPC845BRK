@@ -513,54 +513,64 @@ unsigned int clkdump(char argc,char ** argv)
 }
 LTSH_FUNCTION_EXPORT(clkdump,"dump clk info");
 
+#define CONFIG_CLK_GATE_SHOW_ALL  1
 
 unsigned int clkgate(char argc,char ** argv)
 {
     const char * ahbclk0[32] =
     {
-        "SYS", /* 0 */
-        "ROM",
-        "RAM0_1",
+        "SYS     ",
+        "ROM     ",
+        "RAM0_1  ",
         "Reserved",
-        "FLASH",
-        "I2C0",
-        "GPIO0",
-        "SWM",
-        "SCT",
-        "WKT",
-        "MRT",
-        "SPI0",
-        "SPI1",
-        "CRC",
-        "URAT0",
-        "UART1",
-        "UART2",
-        "WWDT",
-        "IOCON",
-        "ACMP",
-        "GPIO1",
-        "I2C1",
-        "I2C2",
-        "I2C3",
-        "ADC",
-        "CTIMER0"
-        "MTB",
-        "DAC0",
+        "FLASH   ",
+        "I2C0    ",
+        "GPIO0   ",
+        "SWM     ",
+        "SCT     ",
+        "WKT     ",
+        "MRT     ",
+        "SPI0    ",
+        "SPI1    ",
+        "CRC     ",
+        "URAT0   ",
+        "UART1   ",
+        "UART2   ",
+        "WWDT    ",
+        "IOCON   ",
+        "ACMP    ",
+        "GPIO1   ",
+        "I2C1    ",
+        "I2C2    ",
+        "I2C3    ",
+        "ADC     ",
+        "CTIMER0 ",
+        "MTB     ",
+        "DAC0    ",
         "GPIO_INT",
-        "DMA",
-        "UART3",
-        "UART4"
+        "DMA     ",
+        "UART3   ",
+        "UART4   "
     };
 
     const char * ahbclk1[2] = 
     {
-        "CAPT",
-        "DAC1"
+        "CAPT    ",
+        "DAC1    "
     };
     
     uint32_t tmep = SYSCON->SYSAHBCLKCTRL0;
     int i;
     PRINTF("\r\nSYSAHBCLKCTRL0 0x%x\r\n",tmep);
+#if (CONFIG_CLK_GATE_SHOW_ALL)
+    for(i = 0;i < 32;i++)
+    {
+        if(i != 3)
+        {
+            PRINTF("%s\t[%s] \r\n",ahbclk0[i],(tmep & (0x01 << i) ? "√" : "x"));
+        }
+    }
+#else
     tmep &= ~(0x8);
     while(tmep)
     {
@@ -568,15 +578,24 @@ unsigned int clkgate(char argc,char ** argv)
        PRINTF("%s\t[√] \r\n",ahbclk0[i-1]);
        tmep &= ~(0x01<<(i-1));
     }
+#endif /* end of CONFIG_CLK_GATE_SHOW_ALL */
+
     tmep = SYSCON->SYSAHBCLKCTRL1;
     tmep &= 0x03;
     PRINTF("\r\nSYSAHBCLKCTRL1 0x%x\r\n",tmep);
+#if (CONFIG_CLK_GATE_SHOW_ALL)
+    for(i = 0;i < 2;i++)
+    {
+        PRINTF("%s\t[%s] \r\n",ahbclk1[i],(tmep & (0x01 << i) ? "√" : "x"));
+    }
+#else    
     while(tmep)
     {
        i = my_ffs(tmep);
        PRINTF("%s\t[√] \r\n",ahbclk1[i-1]);
        tmep &= ~(0x01<<(i-1));
     }
+#endif /* end of CONFIG_CLK_GATE_SHOW_ALL */
 
     return 0;
 }
