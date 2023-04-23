@@ -25,5 +25,6 @@
 int myatoi(const char* s);
 int myatohex(const char* s);
 long int myatol(const char* s);
+int my_ffs(int value);
 
 #endif /* end of __UTILITIES_H__ */

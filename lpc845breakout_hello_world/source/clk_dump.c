@@ -4,6 +4,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_syscon.h"
 #include "rtlist.h"
+#include "utilities.h"
 
 enum clock_node_id
 {
@@ -511,5 +512,75 @@ unsigned int clkdump(char argc,char ** argv)
     return 1;
 }
 LTSH_FUNCTION_EXPORT(clkdump,"dump clk info");
+
+
+unsigned int clkgate(char argc,char ** argv)
+{
+    const char * ahbclk0[32] =
+    {
+        "SYS", /* 0 */
+        "ROM",
+        "RAM0_1",
+        "Reserved",
+        "FLASH",
+        "I2C0",
+        "GPIO0",
+        "SWM",
+        "SCT",
+        "WKT",
+        "MRT",
+        "SPI0",
+        "SPI1",
+        "CRC",
+        "URAT0",
+        "UART1",
+        "UART2",
+        "WWDT",
+        "IOCON",
+        "ACMP",
+        "GPIO1",
+        "I2C1",
+        "I2C2",
+        "I2C3",
+        "ADC",
+        "CTIMER0"
+        "MTB",
+        "DAC0",
+        "GPIO_INT",
+        "DMA",
+        "UART3",
+        "UART4"
+    };
+
+    const char * ahbclk1[2] = 
+    {
+        "CAPT",
+        "DAC1"
+    };
+    
+    uint32_t tmep = SYSCON->SYSAHBCLKCTRL0;
+    int i;
+    PRINTF("\r\nSYSAHBCLKCTRL0 0x%x\r\n",tmep);
+    tmep &= ~(0x8);
+    while(tmep)
+    {
+       i = my_ffs(tmep);
+       PRINTF("%s\t[√] \r\n",ahbclk0[i-1]);
+       tmep &= ~(0x01<<(i-1));
+    }
+    tmep = SYSCON->SYSAHBCLKCTRL1;
+    tmep &= 0x03;
+    PRINTF("\r\nSYSAHBCLKCTRL1 0x%x\r\n",tmep);
+    while(tmep)
+    {
+       i = my_ffs(tmep);
+       PRINTF("%s\t[√] \r\n",ahbclk1[i-1]);
+       tmep &= ~(0x01<<(i-1));
+    }
+
+    return 0;
+}
+
+LTSH_FUNCTION_EXPORT(clkgate,"clk gate status");
 
 
