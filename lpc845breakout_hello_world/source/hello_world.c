@@ -19,6 +19,7 @@
 #include "cap_touch.h"
 #include "fsl_power.h"
 #include "usart_adapter.h"
+#include "asm_test_s.h"
 
 #include <stdbool.h>
 /*******************************************************************************
@@ -39,12 +40,12 @@
 #define START_STK_SIZE         128
     TaskHandle_t StartTask_Handler;
     void start_task(void *pvParameters);
-    
+
 #define TASK1_TASK_PRIO        2
 #define TASK1_STK_SIZE         128
     TaskHandle_t Task1Task_Handler;
     void start_task1(void *pvParameters);
-    
+
 #define SHELL_TASK_PRIO        2
 #define SHELL_STK_SIZE         256
     TaskHandle_t ShellTask_Handler;
@@ -69,12 +70,12 @@ void start_task(void *pvParameters)
         out = out ? 0 : 1;
     }
 }
-    
-    
+
+
 void start_task1(void *pvParameters)
 {
     uint8_t new = 1,old = 1;
-    
+
     /* get pin by name */
     int pin = lpc84x_pin_get("P0.4");
 
@@ -96,7 +97,7 @@ void start_task1(void *pvParameters)
 int main(void)
 {
     char ch;
-    
+
     /* Initialize board hardware. */
     /* Attach main clock to CAPT */
     CLOCK_Select(kCAPT_Clk_From_Fro);
@@ -138,7 +139,7 @@ int main(void)
                 (void*          )NULL,
                 (UBaseType_t    )SHELL_TASK_PRIO,
                 (TaskHandle_t*  )&ShellTask_Handler);
-    
+
     xTaskCreate((TaskFunction_t )capt_touch_main,
                 (const char*    )"touch",
                 (uint16_t       )CAPT_STK_SIZE,
@@ -146,7 +147,7 @@ int main(void)
                 (UBaseType_t    )CAPT_TASK_PRIO,
                 (TaskHandle_t*  )&CaptTask_Handler);
 
-                
+
     vTaskStartScheduler();
 
 }
@@ -237,12 +238,26 @@ unsigned int iap(char argc,char ** argv)
         IAP_CopyRamToFlash(1023 * FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES, &s_PageBuf[0],
                        FSL_FEATURE_SYSCON_FLASH_PAGE_SIZE_BYTES, SystemCoreClock);
         break;
-    }    
+    }
 
 }
 LTSH_FUNCTION_EXPORT(iap,"test iap api");
 
 
+unsigned int asmtest(char argc,char ** argv)
+{
+    int cmd = 0;
+    cmd = atoi(argv[1]);
 
+    switch(cmd)
+    {
+    case 0:
+        asm_test_ror();
+        break;
+    default:
+        break;
+    }
+}
+LTSH_FUNCTION_EXPORT(asmtest,"test led on off");
 
 
