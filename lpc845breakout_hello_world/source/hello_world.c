@@ -243,16 +243,33 @@ unsigned int iap(char argc,char ** argv)
 }
 LTSH_FUNCTION_EXPORT(iap,"test iap api");
 
+void my_memset1(void * s,uint8_t c,uint32_t count)
+{
+    char *xs = (char *)s;
+
+    while (count--)
+        *xs++ = c;
+}
+
 
 unsigned int asmtest(char argc,char ** argv)
 {
     int cmd = 0;
     cmd = atoi(argv[1]);
+    uint8_t buff[20] = {0xff};
+    uint8_t ch = 0x00;
 
     switch(cmd)
     {
     case 0:
         asm_test_ror();
+        break;
+    case 1:
+        my_memset1((void *)buff,0x55,20);
+        break;
+    case 2:
+        ch = atoi(argv[2]);
+        my_memset(ch);
         break;
     default:
         break;

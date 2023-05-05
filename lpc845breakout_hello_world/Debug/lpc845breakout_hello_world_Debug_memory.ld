@@ -13,7 +13,8 @@ MEMORY
 {
   /* Define each memory region */
   PROGRAM_FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x10000 /* 64K bytes (alias Flash) */  
-  SRAM (rwx) : ORIGIN = 0x10000000, LENGTH = 0x3fe0 /* 16352 bytes (alias RAM) */  
+  SRAM (rwx) : ORIGIN = 0x10000000, LENGTH = 0x3f00 /* 16352 bytes (alias RAM) */  
+  SRAM_ASM (rwx) : ORIGIN = 0x10003f00, LENGTH = 0xe0 /* 16352 bytes (alias RAM) */ 
   IAP_SRAM (rwx) : ORIGIN = 0x10003fe0, LENGTH = 0x20 /* 32 bytes (alias RAM2) */  
 }
 
@@ -24,8 +25,8 @@ MEMORY
   __top_Flash = 0x0 + 0x10000 ; /* 64K bytes */  
   __base_SRAM = 0x10000000  ; /* SRAM */  
   __base_RAM = 0x10000000 ; /* RAM */  
-  __top_SRAM = 0x10000000 + 0x3fe0 ; /* 16352 bytes */  
-  __top_RAM = 0x10000000 + 0x3fe0 ; /* 16352 bytes */  
+  __top_SRAM = 0x10000000 + 0x3f00 ; /* 16352 bytes */  
+  __top_RAM = 0x10000000 + 0x3f00 ; /* 16352 bytes */  
   __base_IAP_SRAM = 0x10003fe0  ; /* IAP_SRAM */  
   __base_RAM2 = 0x10003fe0 ; /* RAM2 */  
   __top_IAP_SRAM = 0x10003fe0 + 0x20 ; /* 32 bytes */  
