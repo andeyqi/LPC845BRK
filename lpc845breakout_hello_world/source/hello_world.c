@@ -275,6 +275,10 @@ unsigned int asmtest(char argc,char ** argv)
         ch = atoi(argv[2]);
         my_memset_c(ch);
         break;
+    case 4:
+        ch = atoi(argv[2]);
+        my_memset_c_1(ch);
+        break;
     default:
         break;
     }

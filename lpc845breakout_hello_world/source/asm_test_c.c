@@ -13,3 +13,20 @@ void my_memset_c(uint8_t ch)
 		  "bne 1b \n"
 		  "bx lr \n");
 }
+
+
+void my_memset_c_1(uint8_t ch)
+{
+	uint32_t start = 0x10003f00;
+	uint32_t end = 0x10003fe0;
+
+	__asm(
+		  "1: \n"
+		  "strb %0,[%1] \n"
+		  "add %1,%1,#1 \n"
+		  "cmp	%1, %2 \n"
+		  "bne 1b \n"
+		  ::"r"(ch),"r"(start),"r"(end)
+		  :"cc");
+}
+
