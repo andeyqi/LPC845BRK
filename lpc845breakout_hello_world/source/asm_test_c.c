@@ -20,7 +20,7 @@ void my_memset_c_1(uint8_t ch)
 	uint32_t start = 0x10003f00;
 	uint32_t end = 0x10003fe0;
 
-	__asm(
+	asm volatile(
 		  "1: \n"
 		  "strb %0,[%1] \n"
 		  "add %1,%1,#1 \n"
