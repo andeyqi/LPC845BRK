@@ -27,6 +27,6 @@ void my_memset_c_1(uint8_t ch)
 		  "cmp	%1, %2 \n"
 		  "bne 1b \n"
 		  ::"r"(ch),"r"(start),"r"(end)
-		  :"cc");
+		  :"cc","memory");
 }
 
