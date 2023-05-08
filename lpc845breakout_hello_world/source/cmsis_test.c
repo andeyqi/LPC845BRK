@@ -15,6 +15,7 @@ unsigned int cmsis(char argc,char ** argv)
     int cmd = 0;
     cmd = atoi(argv[1]);
     uint32_t u32_temp1,u32_temp2;
+    uint16_t u16_temp1,u16_temp2;
 
     switch(cmd)
     {
@@ -25,6 +26,9 @@ unsigned int cmsis(char argc,char ** argv)
         u32_temp1 = 0xaabbccdd;
         u32_temp2 = __REV16(u32_temp1);
         PRINTF("0x%x __REV16 = 0x%x.\r\n",u32_temp1,u32_temp2);
+        u16_temp1 = 0xaabb;
+        u16_temp2 = (uint16_t)__REVSH((int16_t)u16_temp1);
+        PRINTF("0x%x __REVSH = 0x%x.\r\n",u16_temp1,u16_temp2);
         break;
     default:
         break;
