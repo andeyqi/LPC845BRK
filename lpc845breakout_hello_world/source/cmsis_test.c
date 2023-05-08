@@ -9,6 +9,7 @@
 #include "fsl_debug_console.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <core_cm0plus.h>
 
 unsigned int cmsis(char argc,char ** argv)
 {
@@ -29,6 +30,9 @@ unsigned int cmsis(char argc,char ** argv)
         u16_temp1 = 0xaabb;
         u16_temp2 = (uint16_t)__REVSH((int16_t)u16_temp1);
         PRINTF("0x%x __REVSH = 0x%x.\r\n",u16_temp1,u16_temp2);
+        break;
+     case 1:
+        __NVIC_SystemReset();
         break;
     default:
         break;
