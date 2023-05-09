@@ -31,8 +31,13 @@ unsigned int cmsis(char argc,char ** argv)
         u16_temp2 = (uint16_t)__REVSH((int16_t)u16_temp1);
         PRINTF("0x%x __REVSH = 0x%x.\r\n",u16_temp1,u16_temp2);
         break;
-     case 1:
+    case 1:
         __NVIC_SystemReset();
+        break;
+    case 2:
+        u32_temp1 = __get_CONTROL();
+        PRINTF("CONTROL %x CONTROL_SPSEL %d CONTROL_nPRIV %d.\r\n",
+                u32_temp1,_FLD2VAL(CONTROL_SPSEL,u32_temp1),_FLD2VAL(CONTROL_nPRIV,u32_temp1));
         break;
     default:
         break;
