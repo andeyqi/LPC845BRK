@@ -95,9 +95,9 @@ unsigned int hexwrite(char argc,char ** argv)
         addr = myatoi(argv[1]);
 
     if((argv[2][0] == '0') && (argv[2][1] == 'x' || argv[2][1] == 'X'))
-        addr = myatohex(&argv[2][2]);
+        value = myatohex(&argv[2][2]);
     else
-        addr = myatoi(argv[2]);
+        value = myatoi(argv[2]);
 
     *((uint32_t *)addr) = value;
 
