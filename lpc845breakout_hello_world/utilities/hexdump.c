@@ -30,7 +30,7 @@ unsigned int hexdump1(char argc,char ** argv)
 
     if(wide == 1)
         trace_byte_stream((uint8_t *)addr,len,addr);
-    
+
     if(wide == 2)
         trace_hword_stream((uint16_t *)addr,len,addr);
 
@@ -82,5 +82,26 @@ unsigned int hexdump2(char argc,char ** argv)
 }
 LTSH_FUNCTION_EXPORT(hexdump2,"dump data with start addr and end addr");
 
+unsigned int hexwrite(char argc,char ** argv)
+{
+    int addr,value;
 
+    if(argc != 3)
+        return 1;
+
+    if((argv[1][0] == '0') && (argv[1][1] == 'x' || argv[1][1] == 'X'))
+        addr = myatohex(&argv[1][2]);
+    else
+        addr = myatoi(argv[1]);
+
+    if((argv[2][0] == '0') && (argv[2][1] == 'x' || argv[2][1] == 'X'))
+        addr = myatohex(&argv[2][2]);
+    else
+        addr = myatoi(argv[2]);
+
+    *((uint32_t *)addr) = value;
+
+    return 0;
+}
+LTSH_FUNCTION_EXPORT(hexwrite,"write value to address");
 
