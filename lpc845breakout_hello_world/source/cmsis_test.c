@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
-#if defined (__GNUC__)
-#include <cmsis_gcc.h>
-#elif defined (__ICCARM__)
-#include <cmsis_iar.h>
-#endif
+#include <cmsis_compiler.h>
 #include "littleshell.h"
 #include "fsl_debug_console.h"
 #include <stdio.h>
