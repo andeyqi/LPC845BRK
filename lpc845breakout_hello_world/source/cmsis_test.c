@@ -39,6 +39,9 @@ unsigned int cmsis(char argc,char ** argv)
         PRINTF("CONTROL %x CONTROL_SPSEL %d CONTROL_nPRIV %d.\r\n",
                 u32_temp1,_FLD2VAL(CONTROL_SPSEL,u32_temp1),_FLD2VAL(CONTROL_nPRIV,u32_temp1));
         break;
+    case 3:
+        __BKPT(0);
+        break;
     default:
         break;
     }
