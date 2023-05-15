@@ -5,7 +5,7 @@
 
 unsigned int hexdump1(char argc,char ** argv)
 {
-    int addr = 0,len = 0,wide = 1;
+    uint32_t addr = 0,len = 0,wide = 1;
 
     if( argc < 3)
         return 1;
