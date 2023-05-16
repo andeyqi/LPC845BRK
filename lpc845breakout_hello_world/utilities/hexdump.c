@@ -105,3 +105,13 @@ unsigned int hexwrite(char argc,char ** argv)
 }
 LTSH_FUNCTION_EXPORT(hexwrite,"write value to address");
 
+
+#define __BLOCK_FREE_TO(__N, __NUM)            BLOCK_FREE_TO_##__N = __N+1,
+
+/*============================ TYPES =========================================*/
+#include "macro_repeat.h"
+enum {
+    BLOCK_FREE_TO_ANY = 0,
+    MACRO_REPEAT(254, __BLOCK_FREE_TO, NULL)
+    BLOCK_NO_FREE     = 255
+};
