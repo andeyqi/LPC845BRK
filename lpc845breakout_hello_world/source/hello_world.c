@@ -285,4 +285,31 @@ unsigned int asmtest(char argc,char ** argv)
 }
 LTSH_FUNCTION_EXPORT(asmtest,"test led on off");
 
+#if defined (__GNUC__ )
+
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
+unsigned int gccversion(char argc,char ** argv)
+{
+	PRINTF("GCC_VERSION  %d.\r\n",GCC_VERSION);
+}
+LTSH_FUNCTION_EXPORT(gccversion,"show gcc version");
+
+unsigned int gccinit(char argc,char ** argv)
+{
+	uint8_t a[] = {1,2,3,4,5,6,7,8};
+	trace_byte_stream(a,8,0);
+	uint8_t b[50] = {[10] = 1,[30] = 2};
+	trace_byte_stream(b,50,0);
+	uint8_t c[50] = {[10 ... 20] = 1,[30 ... 40] = 2};
+	trace_byte_stream(c,50,0);
+	PRINTF("GCC_VERSION  %d.\r\n",GCC_VERSION);
+}
+LTSH_FUNCTION_EXPORT(gccinit,"test gcc init");
+
+#endif
+
+
 
