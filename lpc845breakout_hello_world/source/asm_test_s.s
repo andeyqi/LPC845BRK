@@ -30,4 +30,6 @@ asm_test_ror:
     ldr r2,=24
     ror r0,r2
 
+    stmia   r5!, {r0, r4}
+
     bx lr

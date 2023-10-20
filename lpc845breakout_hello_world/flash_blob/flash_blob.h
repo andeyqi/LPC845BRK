@@ -41,7 +41,8 @@ typedef struct {
 	int (*UnInit)(uint32_t fnc);
     int (*EraseChip)(void);
 	int (*EraseSector)(uint32_t adr);
-	int (*ProgramPage)(uint32_t adr, uint32_t sz, uint8_t* buf);  
+	int (*ProgramPage)(uint32_t adr, uint32_t sz, uint8_t* buf);
+	flash_dev_t *ptFlashDev;
 }flash_ops_t;
 
 typedef struct
