@@ -98,6 +98,7 @@ BOARD_InitPins:
     clkdiv: div0}
   - {pin_num: '3', peripheral: CAPT, signal: CAPTYH, pin_signal: PIO1_9/CAPT_YH, mode: inactive, invert: disabled, hysteresis: enabled, opendrain: disabled, smode: bypass,
     clkdiv: div0}
+  - {pin_num: '6', peripheral: PINT, signal: 'PINT, 0', pin_signal: PIO0_4/ADC_11}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -205,6 +206,15 @@ void BOARD_InitPins(void)
 
     /* CAPT_YH connect to P1_9 */
     SWM_SetFixedPinSelect(SWM0, kSWM_CAPT_YH, true);
+
+    SYSCON->PINTSEL[0] = ((SYSCON->PINTSEL[0] &
+                           /* Mask bits to zero which are setting */
+                           (~(SYSCON_PINTSEL_INTPIN_MASK)))
+
+                          /* Pin number select for pin interrupt or pattern match engine input. (PIO0_0 to
+                           * PIO0_31correspond to numbers 0 to 31 and PIO1_0 to PIO1_31 correspond to numbers 32 to
+                           * 63).: 0x04u */
+                          | SYSCON_PINTSEL_INTPIN(0x04u));
 
     /* Disable clock for switch matrix. */
     CLOCK_DisableClock(kCLOCK_Swm);

@@ -36,7 +36,11 @@ unsigned int cmsis(char argc,char ** argv)
                 u32_temp1,_FLD2VAL(CONTROL_SPSEL,u32_temp1),_FLD2VAL(CONTROL_nPRIV,u32_temp1));
         break;
     case 3:
-        __BKPT(0);
+    	PRINTF("==== %x ====\r\n",(*((uint32_t *)0XE000EDF0)));
+    	if((*((uint32_t *)0XE000EDF0)) & 0x01)
+    	{
+    		__BKPT(0);
+    	}
         break;
     default:
         break;

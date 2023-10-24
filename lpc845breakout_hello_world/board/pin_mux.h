@@ -68,6 +68,13 @@ void BOARD_InitBootPins(void);
 #define BOARD_CAPY_HIGH_PIN_MASK (1U << 9U)      /*!<@brief PORT pin mask */
                                                  /* @} */
 
+/*! @name PIO0_4 (number 6), K3/CN1[35]/PIO0_4/ADC_11/TRSTN/WAKEUP
+  @{ */
+#define BOARD_K3_PORT 0U                  /*!<@brief PORT device index: 0 */
+#define BOARD_K3_PIN 4U                   /*!<@brief PORT pin number */
+#define BOARD_K3_PIN_MASK (1U << 4U)      /*!<@brief PORT pin mask */
+                                          /* @} */
+
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
  *
