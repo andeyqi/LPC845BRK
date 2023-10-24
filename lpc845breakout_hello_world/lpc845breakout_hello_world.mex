@@ -96,6 +96,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="Peripheral" resourceId="PINT" description="Peripheral PINT is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
@@ -163,6 +168,7 @@
                         <pin_feature name="clkdiv" value="div0"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="PINT" signal="PINT, 0" pin_num="6" pin_signal="PIO0_4/ADC_11"/>
                </pins>
             </function>
          </functions_list>
