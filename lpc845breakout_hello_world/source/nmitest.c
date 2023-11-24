@@ -8,12 +8,14 @@
 void pint_cb(pint_pin_int_t pintr, uint32_t pmatch_status)
 {
 	PRINTF("pint0 ISR\r\n");
+	PINT_PinInterruptClrStatus(PINT,PIN_INT0_IRQn);
 }
 
 void NMI_Handler(void)
 {
 	PRINTF("nmi isr\r\n");
-	SYSCON->NMISRC =  ((SYSCON->NMISRC & (~SYSCON_NMISRC_NMIEN_MASK)));
+	PINT_PinInterruptClrStatus(PINT,PIN_INT0_IRQn);
+	//SYSCON->NMISRC =  ((SYSCON->NMISRC & (~SYSCON_NMISRC_NMIEN_MASK)));
 }
 
 unsigned int nmi(char argc,char ** argv)

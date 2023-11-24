@@ -13,8 +13,8 @@
     <mapAttribute key="com.crt.ctrlcenter.symbolsGroupSettings"/>
     <intAttribute key="com.crt.ctrlcenter.version" value="6"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.base.address" value="0x0"/>
-    <booleanAttribute key="com.nxp.mcuxpresso.flash.clear.console" value="true"/>
-    <booleanAttribute key="com.nxp.mcuxpresso.flash.confirm" value="false"/>
+    <booleanAttribute key="com.nxp.mcuxpresso.flash.clear.console" value="false"/>
+    <booleanAttribute key="com.nxp.mcuxpresso.flash.confirm" value="true"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.erase.algorithm" value="Mass erase"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.executable" value="axf"/>
     <stringAttribute key="com.nxp.mcuxpresso.flash.program.action" value="Program"/>
@@ -50,7 +50,7 @@
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.doReset" value="false"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageFileName" value=""/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.imageOffset" value=""/>
-    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="set non-stop on&#10;set pagination off&#10;set mi-async&#10;set remotetimeout 60000&#10;##target_extended_remote##&#10;set mem inaccessible-by-default ${mem.access}&#10;mon ondisconnect ${ondisconnect}&#10;set arm force-mode thumb&#10;${load}"/>
+    <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.initCommands" value="set non-stop on&#13;&#10;set pagination off&#13;&#10;set mi-async&#13;&#10;set remotetimeout 60000&#13;&#10;##target_extended_remote##&#13;&#10;set mem inaccessible-by-default ${mem.access}&#13;&#10;mon ondisconnect ${ondisconnect}&#13;&#10;set arm force-mode thumb&#13;&#10;${load}"/>
     <stringAttribute key="org.eclipse.cdt.debug.gdbjtag.core.ipAddress" value="localhost"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadImage" value="true"/>
     <booleanAttribute key="org.eclipse.cdt.debug.gdbjtag.core.loadSymbols" value="true"/>
