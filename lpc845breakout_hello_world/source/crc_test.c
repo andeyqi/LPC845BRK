@@ -91,7 +91,23 @@ static void InitCrc32(CRC_Type *base, uint32_t seed)
     CRC_Init(base, &config);
 }
 
+static void InitCrc32_mpeg2(CRC_Type *base, uint32_t seed)
+{
+    crc_config_t config;
 
+    config.polynomial    = kCRC_Polynomial_CRC_32;
+    config.reverseIn     = false;
+    config.complementIn  = false;
+    config.reverseOut    = false;
+    config.complementOut = false;
+    config.seed          = seed;
+
+    CRC_Init(base, &config);
+}
+
+extern const int _image_start;
+extern const int _image_end;
+extern const int _image_size;
 unsigned int crctest(char argc,char ** argv)
 {
 	uint8_t testdata[]  = "1234";
@@ -124,3 +140,48 @@ unsigned int crctest(char argc,char ** argv)
 };
 
 LTSH_FUNCTION_EXPORT(crctest,"test crc module");
+
+
+/* CRC structure containing information for the offline CRC calculation. */
+typedef struct _fs_crc
+{
+    uint16_t ui16Start;
+    uint32_t ui32FlashStart __attribute__((packed));
+    uint32_t ui32FlashEnd __attribute__((packed));
+    uint32_t ui32CRC __attribute__((packed));
+    uint16_t ui16End __attribute__((packed));
+} fs_crc_t;
+
+
+
+/* The safety-related FLASH CRC value. */
+fs_crc_t c_sfsCRC __attribute__((used, section(".flshcrc"))) =
+{
+    .ui16Start      = 0xA55AU,
+    .ui32FlashStart = &_image_start,
+    .ui32FlashEnd   = &_image_end,
+    .ui32CRC        = 0xFFFFFFFFU,
+    .ui16End        = 0x5AA5U
+};
+
+
+unsigned int crcimage(char argc,char ** argv)
+{
+	uint32_t checksum32 = 0x00;
+    CRC_Type *base = CRC;
+
+    /* ***************
+     * CRC-32 *
+     *************** */
+	InitCrc32_mpeg2(base, 0xffffFFFF);
+    CRC_WriteData(base, (uint8_t *)&_image_start, &_image_size);
+    checksum32 = CRC_Get32bitResult(base);
+    if(checksum32 == c_sfsCRC.ui32CRC)
+    	PRINTF("image crc check ok\r\n");
+    else
+    	PRINTF("image crc check failed %x != %x\r\n",checksum32,c_sfsCRC.ui32CRC);
+
+	return 0;
+};
+
+LTSH_FUNCTION_EXPORT(crcimage,"test image crc");

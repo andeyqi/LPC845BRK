@@ -12,6 +12,13 @@
 INCLUDE "lpc845breakout_hello_world_Debug_library.ld"
 INCLUDE "lpc845breakout_hello_world_Debug_memory.ld"
 
+
+__size_flash_crc__    = 0x10;
+
+m_fs_flash_crc_end   = (__top_PROGRAM_FLASH);
+m_fs_flash_crc_start = (m_fs_flash_crc_end - __size_flash_crc__);
+m_flash_end          = (m_fs_flash_crc_start - 0x1);
+
 ENTRY(ResetISR)
 
 SECTIONS
@@ -75,6 +82,15 @@ SECTIONS
         __exidx_end = .;
     } > PROGRAM_FLASH
  
+ 
+    /* The safety FLASH CRC. */
+    .SEC_CRC m_fs_flash_crc_start : ALIGN(4)
+    {
+        FILL(0xff)
+        KEEP(*(.flshcrc*))
+    } 
+
+
     _etext = .;
         
     /* possible MTB section for IAP_SRAM */
