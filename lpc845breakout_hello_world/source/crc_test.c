@@ -177,7 +177,7 @@ unsigned int crcimage(char argc,char ** argv)
     CRC_WriteData(base, (uint8_t *)&_image_start, &_image_size);
     checksum32 = CRC_Get32bitResult(base);
     if(checksum32 == c_sfsCRC.ui32CRC)
-    	PRINTF("image crc check ok\r\n");
+    	PRINTF("image crc check ok %x = %x\r\n",checksum32,c_sfsCRC.ui32CRC);
     else
     	PRINTF("image crc check failed %x != %x\r\n",checksum32,c_sfsCRC.ui32CRC);
 
