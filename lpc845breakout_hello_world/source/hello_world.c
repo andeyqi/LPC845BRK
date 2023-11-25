@@ -166,6 +166,35 @@ unsigned int led(char argc,char ** argv)
 LTSH_FUNCTION_EXPORT(led,"test led on off");
 
 
+unsigned int resetsource(char argc,char ** argv)
+{
+    uint32_t sys_rst_status = 0;
+
+    sys_rst_status = SYSCON->SYSRSTSTAT;
+
+    PRINTF("SYSRSTSTAT %x \r\n",sys_rst_status);
+
+    if(sys_rst_status & SYSCON_SYSRSTSTAT_POR_MASK)
+        PRINTF("POR\r\n");
+    if(sys_rst_status & SYSCON_SYSRSTSTAT_EXTRST_MASK)
+        PRINTF("EXTRST\r\n");
+    if(sys_rst_status & SYSCON_SYSRSTSTAT_WDT_MASK)
+        PRINTF("WDT\r\n");
+    if(sys_rst_status &SYSCON_SYSRSTSTAT_BOD_MASK)
+        PRINTF("BOD\r\n");
+    if(sys_rst_status & SYSCON_SYSRSTSTAT_SYSRST_MASK)
+        PRINTF("SYSRST\r\n");
+
+    SYSCON->SYSRSTSTAT = sys_rst_status;
+
+    sys_rst_status = SYSCON->SYSRSTSTAT;
+
+    PRINTF("SYSRSTSTAT %x \r\n",sys_rst_status);
+
+    return 1;
+}
+LTSH_FUNCTION_EXPORT(resetsource,"show reset source");
+
 unsigned int add(char argc,char ** argv)
 {
     int a,b;
