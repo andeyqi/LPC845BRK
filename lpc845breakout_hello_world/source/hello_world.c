@@ -72,6 +72,95 @@ void start_task(void *pvParameters)
     }
 }
 
+uint32_t ostime = 0;
+
+void english_mode(uint8_t value)
+{
+    const char * english[] =
+    {
+     "The ink is black.",
+     "I like to eat jam.",
+     "I see a nest.",
+     "We play in the park.",
+     "He has a robot.",
+     "This is my mom.",
+     "Q said _|, queen quite quiz.",
+     "R said _|, robot rocket rabbit",
+     "She is a queen.",
+     "He has a rabbit.",
+     "R said _|, robot rocket rabbit",
+     "R said _|, robot rocket rabbit",
+     "R said _|, robot rocket rabbit",
+     "R said _|, robot rocket rabbit",
+     "R said _|, robot rocket rabbit",
+     "R said _|, robot rocket rabbit",
+    };
+
+    if(value)
+    {
+        PRINTF("%s.\r\n",english[ostime%(sizeof(english)/sizeof(english[0]))]);
+    }
+}
+
+
+void mach_mode(uint8_t value)
+{
+    static uint8_t a = 0,b = 0,c = 0;
+
+#define MACH_GEN_PROBLEM 0
+#define MACH_SHOW_ANS    1
+
+    static uint8_t mach_status =  MACH_GEN_PROBLEM;
+    if(value)
+    {
+        switch(mach_status)
+        {
+        case MACH_GEN_PROBLEM:
+            a = (ostime & 0x0f)%10;
+            b = ((ostime >> 4) & 0xf0)%10;
+            c = ((ostime >> 8) & 0xf0)%10;
+
+            if(c < 5)
+            {
+                a = a < 5 ? a+8 : a;
+                b = b < 5 ? b+3 : b;
+                PRINTF("%d + %d = ? \r\n",a,b);
+            }
+            else
+            {
+                a = a > 5 ? a-4 : a;
+                b = b > 5 ? b-3 : b;
+                PRINTF("%d ¡Á %d = ? \r\n",a,b);
+            }
+            mach_status = MACH_SHOW_ANS;
+            break;
+        case MACH_SHOW_ANS:
+
+            if(c < 5)
+                PRINTF("%d + %d = %d \r\n",a,b,a+b);
+            else
+                PRINTF("%d ¡Á %d = %d \r\n",a,b,a*b);
+
+            mach_status = MACH_GEN_PROBLEM;
+            break;
+        }
+    }
+}
+
+typedef void (*stdudy_mode)(uint8_t);
+
+stdudy_mode mode = mach_mode;
+
+unsigned int stdudymode(char argc,char ** argv)
+{
+    if(strcmp("english",argv[1]) == 0)
+        mode = english_mode;
+
+    if(strcmp("math",argv[1]) == 0)
+        mode = mach_mode;
+    return 1;
+}
+LTSH_FUNCTION_EXPORT(stdudymode,"stdudy mode");
 
 void start_task1(void *pvParameters)
 {
@@ -79,6 +168,7 @@ void start_task1(void *pvParameters)
 
     /* get pin by name */
     int pin = lpc84x_pin_get("P0.4");
+
 
     lpc84x_pin_mode(pin,PIN_MODE_INPUT);
 
@@ -88,7 +178,14 @@ void start_task1(void *pvParameters)
         if(new != old)
         {
             old = new;
-            PRINTF("K3 %s\r\n",(new ? "UP":"DOWN"));
+
+            if(!new)
+            {
+                if(mode)
+                {
+                    mode(1);
+                }
+            }
         }
         vTaskDelay(100);
     }

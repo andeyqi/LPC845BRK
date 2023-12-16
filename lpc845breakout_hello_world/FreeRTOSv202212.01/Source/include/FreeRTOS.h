@@ -663,7 +663,8 @@ to the task control block of the selected task. */
 #endif
 
 #ifndef traceTASK_INCREMENT_TICK
-    #define traceTASK_INCREMENT_TICK( xTickCount )
+    extern uint32_t ostime;
+    #define traceTASK_INCREMENT_TICK( xTickCount )  ostime = xTickCount
 #endif
 
 #ifndef traceTIMER_CREATE
